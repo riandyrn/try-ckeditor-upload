@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>CKEditor 5 – Classic editor</title>
+    <script src="./ckeditor.js"></script>
+</head>
+
+<body>
+    <h1>Classic editor</h1>
+    <div id="editor">
+        <p>This is some sample content. Hehe..</p>
+    </div>
+    <script>
+        var editor;
+        (async function () {
+            editor = await ClassicEditor.create(document.querySelector('#editor'), {
+                simpleUpload: {
+                    // The URL that the images are uploaded to.
+                    uploadUrl: 'http://localhost:9765/upload',
+
+                    // Headers sent along with the XMLHttpRequest to the upload server.
+                    headers: {
+                        'Authorization': 'Bearer this_is_example_access_token'
+                    }
+                }
+            });
+            console.log(editor.getData());
+        })()
+    </script>
+</body>
+
+</html>
