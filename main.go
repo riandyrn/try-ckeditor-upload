@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -15,8 +16,9 @@ import (
 const addr = ":9765"
 
 const (
-	envKeyBaseImageURL = "BASE_IMAGE_URL"
-	envKeyBucketName   = "BUCKET_NAME"
+	envKeyBaseImageURL    = "BASE_IMAGE_URL"
+	envKeyBucketName      = "BUCKET_NAME"
+	envKeyUploadAccessKey = "UPLOAD_ACCESS_KEY"
 )
 
 func main() {
@@ -36,6 +38,11 @@ func main() {
 func handleUpload(s3Uploader *s3manager.Uploader) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
+			tokens := strings.Split(r.Header.Get("Authorization"), " ")
+			if tokens[1] != os.Getenv(envKeyUploadAccessKey) {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
 			reader, _ := r.MultipartReader()
 			p, _ := reader.NextPart()
 			defer p.Close()
@@ -51,7 +58,6 @@ func handleUpload(s3Uploader *s3manager.Uploader) func(http.ResponseWriter, *htt
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Write(b)
-
 		} else if r.Method == http.MethodOptions {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Headers", "*")
