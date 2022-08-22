@@ -10,8 +10,12 @@
 <body>
     <h1>Classic editor</h1>
     <div id="editor">
-        <p>This is some sample content. Hehe..</p>
+        <p>This is <strong>some sample content. Hehe..</strong></p><p><img class="image_resized" style="width:9.21%;" src="https://alcore-assets.s3.ap-southeast-1.amazonaws.com/3fc61bf9-c72e-48f0-b893-776e1b629de4.jpg"></p><p>Testing paragraph:</p><ol><li><i>This is the first line</i></li><li><a href="https://google.com">This is the second line</a></li><li>This is <strong>the third line</strong></li></ol>
     </div>
+    <br>
+    <button id="btn-preview">Show Preview</button>
+    <br>
+    <div id="preview" class="ck-content"></div>
     <script>
         var editor;
         (async function () {
@@ -26,7 +30,12 @@
                     }
                 }
             });
-            console.log(editor.getData());
+            
+            // set action to preview button
+            document.getElementById("btn-preview").onclick = function(e) {
+                e.preventDefault();
+                document.getElementById("preview").innerHTML = editor.getData();
+            }
         })()
     </script>
 </body>
